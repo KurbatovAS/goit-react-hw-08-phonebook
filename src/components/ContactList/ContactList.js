@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
-import s from './ContactList.module.css';
+import { UnorderedList } from '@chakra-ui/react';
+
 import ContactItems from '../ContactItems';
 
 function ContactList() {
@@ -13,11 +14,16 @@ function ContactList() {
   }
 
   return (
-    <ul className={s.list}>
+    <UnorderedList
+      listStyleType="none"
+      color="#1967d2"
+      fontSize="md"
+      fontWeight="bold"
+    >
       {contactsFiltering().map(contact => {
         return <ContactItems key={contact.id} contact={contact} />;
       })}
-    </ul>
+    </UnorderedList>
   );
 }
 

@@ -1,20 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchContacts',
   async function (_, { rejectWithValue }) {
     try {
-      const response = await fetch(
-        'https://625c013250128c57020a37ea.mockapi.io/contacts'
-      );
+      const response = await axios.get('/contacts');
 
-      if (!response.ok) {
+      if (response.statusText !== 'OK') {
         throw new Error('Server error!');
       }
 
-      const data = await response.json();
-
-      return data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -25,12 +22,9 @@ export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
   async function (id, { rejectWithValue, dispatch }) {
     try {
-      const response = await fetch(
-        `https://625c013250128c57020a37ea.mockapi.io/contacts/${id}`,
-        { method: 'DELETE' }
-      );
+      const response = await axios.delete(`/contacts/${id}`);
 
-      if (!response.ok) {
+      if (response.statusText !== 'OK') {
         throw new Error("Can't delete contact. Server error!");
       }
 
@@ -45,22 +39,14 @@ export const createContact = createAsyncThunk(
   'contacts/createContact',
   async function (contact, { rejectWithValue, dispatch }) {
     try {
-      const response = await fetch(
-        `https://625c013250128c57020a37ea.mockapi.io/contacts/`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(contact),
-        }
-      );
+      const response = await axios.post(`/contacts`, contact);
 
-      if (!response.ok) {
+      if (response.statusText !== 'Created') {
+        console.log('Выполнился if при создании контакта');
         throw new Error("Can't add contact. Server error!");
       }
 
-      const data = await response.json();
+      const data = await response.data;
 
       dispatch(add(data));
     } catch (error) {
@@ -105,7 +91,11 @@ export const contactsSlice = createSlice({
     [fetchContacts.pending]: setPending,
     [fetchContacts.fulfilled]: setFulfilled,
     [fetchContacts.rejected]: setError,
+    [deleteContact.rejected]: setPending,
+    [deleteContact.rejected]: setFulfilled,
     [deleteContact.rejected]: setError,
+    [createContact.rejected]: setPending,
+    [createContact.rejected]: setFulfilled,
     [createContact.rejected]: setError,
   },
 });
