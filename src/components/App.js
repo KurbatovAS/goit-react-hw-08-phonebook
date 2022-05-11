@@ -36,7 +36,7 @@ function App() {
           <Route path="contacts" element={<ContactsView />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="contacts" />} />
       </Route>
     </Routes>
   );
